@@ -1,30 +1,28 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { NextFederationPlugin } from "@module-federation/nextjs-mf";
 
-const nextConfig = {
-  webpack(config) {
-    config.plugins.push(
-      new NextFederationPlugin({
-        name: "remote_app",
-        filename: "static/chunks/remoteEntry.js",
-        exposes: {
-          "./Widget": "./components/Widget.tsx",
-        },
-        shared: {
-          react: {
-            singleton: true,
-            eager: true,
-            requiredVersion: false,
+export default {
+  reactStrictMode: true,
+  webpack(config, { isServer }) {
+    if (!isServer) {
+      config.plugins.push(
+        new NextFederationPlugin({
+          name: "remote_app",
+          filename: "static/chunks/remoteEntry.js",
+          exposes: {
+            "./Widget": "./components/Widget.tsx",
           },
-          "react-dom": {
-            singleton: true,
-            eager: true,
-            requiredVersion: false,
+          shared: {
+            react: { singleton: true, eager: true, requiredVersion: false },
+            "react-dom": {
+              singleton: true,
+              eager: true,
+              requiredVersion: false,
+            },
           },
-        },
-      })
-    );
+        })
+      );
+    }
     return config;
   },
 };
-
-export default nextConfig;
